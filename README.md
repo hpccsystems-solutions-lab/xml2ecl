@@ -1,7 +1,6 @@
 # Table of Contents
 
 - [Description](#description)
-- [Getting The Binary](#getting_the_binary)
 - [Building From Source](#building_from_source)
 - [How to Use](#how_to_use)
 - [Examples](#examples)
@@ -23,13 +22,6 @@ declarative language called Enterprise Control language (ECL).  It is a schema-o
 system, meaning that you supply a schema to the function that reads data for processing.
 An "ECL record definition" in this context means that schema:  xml2ecl generates the
 schema as text that can be pasted into an IDE and used within an ECL program.
-
-<a name="getting_the_binary"></a>
-# Getting The Binary
-
-Head over the [releases](https://github.com/dancamper/xml2ecl/releases) section of
-the Github repo and choose the version that matches your operating system.  Decompress
-the file and put the result somewhere on your PATH for easy reference.
 
 <a name="building_from_source"></a>
 # Building From Source
