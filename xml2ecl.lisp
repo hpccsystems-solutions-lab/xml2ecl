@@ -63,6 +63,13 @@ an XML scope.")
   (and (= (the fixnum (max-visit-count obj)) 1)
        (only-inner-text-p obj)))
 
+(defmethod no-inner-p ((obj t))
+  nil)
+
+(defmethod no-inner-p ((obj xml-object))
+  (and (zerop (hash-table-count (attrs obj)))
+       (zerop (hash-table-count (children obj)))))
+
 ;;;
 
 (defun is-ecl-keyword-p (name)
@@ -254,7 +261,7 @@ then kick off a new depth of parsing with the result."
   (declare (string name))
   (if (string-equal name *inner-text-tag*)
       "{XPATH('')}"
-      (let ((cleaned-name (remove-illegal-chars name :replacement-char #\* :keep-char-list '(#\-)))
+      (let ((cleaned-name (remove-illegal-chars name :replacement-char #\* :keep-char-list '(#\- #\:)))
             (attr-prefix (if attributep "@" "")))
         (format nil "{XPATH('~A~A')}" attr-prefix cleaned-name))))
 
@@ -400,8 +407,9 @@ as an ECL comment describing those types."
 
 (defmethod parse-obj ((obj xml-object) source)
   (loop named parse
-        do (multiple-value-bind (event chars name) (fxml.klacks:consume source)
-             (declare (type (or keyword null) event)
+        do (multiple-value-bind (event chars lname name) (fxml.klacks:consume source)
+             (declare (ignore lname)
+                      (type (or keyword null) event)
                       (type (or simple-string null) name chars))
              (cond ((null event)
                     (return-from parse obj))
@@ -437,10 +445,14 @@ just a single attribute; those can be 'promoted' to a scalar and the child datas
 (defmethod fixup ((obj xml-object))
   (loop for name being the hash-keys of (children obj)
           using (hash-value child)
-        do (if (single-inner-text-p child)
-               (setf (gethash name (children obj)) (gethash *inner-text-tag*
-                                                            (children (gethash name (children obj)))))
-               (fixup child)))
+        do (cond ((single-inner-text-p child)
+                  (setf (gethash name (children obj)) (gethash *inner-text-tag*
+                                                               (children (gethash name (children obj))))))
+                 ((no-inner-p child)
+                  (setf (gethash name (children obj)) '(default-string))
+                  )
+                 (t
+                  (fixup child))))
   obj)
 
 ;;;
