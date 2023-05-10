@@ -524,19 +524,17 @@ be the 'root' object."
 
 ;;;
 
-(defun run-profile-test (num-tests)
+(defun run-profile-test (file-list num-tests)
   (declare (fixnum num-tests))
   (time
    (dotimes (n num-tests)
      (with-open-stream (*standard-output* (make-broadcast-stream))
-       (run '("/Users/lordgrey/Downloads/XML_data/map_nodes.xml"
-              "/Users/lordgrey/Downloads/XML_data/map_relations.xml"
-              "/Users/lordgrey/Downloads/XML_data/map_ways.xml")))
+       (run file-list))
      (when (zerop (mod n 10))
        (format t "~%"))
      (princ "."))))
 
-(defun profile (&optional (num-tests 100))
+(defun profile (file-list &optional (num-tests 100))
   (declare (fixnum num-tests))
   (sb-profile:reset)
   (sb-profile:profile apply-prefix
@@ -570,6 +568,6 @@ be the 'root' object."
                       reset-visits
                       single-inner-text-p
                       unwrap-parsed-object)
-  (run-profile-test num-tests)
+  (run-profile-test file-list num-tests)
   (sb-profile:report))
 
