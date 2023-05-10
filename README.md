@@ -5,6 +5,7 @@
 - [How to Use](#how_to_use)
 - [Examples](#examples)
 - [Limitations](#limitations)
+- [Run Via Docker Image](#via_docker_image)
 
 <a name="description"></a>
 # Description
@@ -13,7 +14,8 @@ xml2ecl is a command-line tool that examines XML data and deduces the
 ECL RECORD definitions necessary to parse it.  The resulting ECL definitions are returned
 via standard out, suitable for piping or pasting into your favorite IDE.
 
-See [json2ecl](https://github.com/dancamper/json2ecl) for a JSON version of this functionality.
+See [json2ecl](https://github.com/hpccsystems-solutions-lab/json2ecl) for a JSON version
+of this functionality.
 
 ## ECL Record Definitions ???
 
@@ -249,3 +251,32 @@ ds := HTTPCALL
 
 * Namespace handling has not been fully tested.
 * XML encoding tags (e.g. `<?xml version="1.0" encoding="UTF-8" ?>` are not handled properly.
+
+<a name="via_docker_image"></a>
+# Run Via Docker Image
+
+xml2ecl has been bundled with json2ecl and published as an Ubuntu-based Docker image.
+The shell script [jx2ecl.sh](jx2ecl.sh) helps automate downloading of the proper Docker
+image and executing the correct tool depending on the type of the files passed as arguments.
+
+You can copy that single [jx2ecl.sh](jx2ecl.sh) to your system and make sure that it is
+executable and in your PATH.  Then, use the script like you would in the examples above:
+
+```none
+$ jx2ecl.sh foo.xml baz.xml 
+
+TOPLEVEL_223_LAYOUT := RECORD
+    UNSIGNED start {XPATH('@start')};
+    STRING f_end {XPATH('@end')}; // boolean, float
+    REAL incr {XPATH('@incr')};
+    UTF8 foo {XPATH('foo')};
+END;
+
+// ds := DATASET('~data::toplevel_223', TOPLEVEL_223_LAYOUT, XML('node'));
+```
+
+The script will see that XML files are passed in (via their file extension) and will
+execute the xml2ecl tool found on the Docker image.
+
+Limitation:  Piping data via stdin to the shell script is not supported.  With the script,
+you can only parse files.
