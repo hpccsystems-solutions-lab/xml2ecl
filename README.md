@@ -258,6 +258,7 @@ ds := HTTPCALL
 xml2ecl has been bundled with json2ecl and published as an Ubuntu-based Docker image.
 The shell script [jx2ecl.sh](jx2ecl.sh) helps automate downloading of the proper Docker
 image and executing the correct tool depending on the type of the files passed as arguments.
+Both Docker and Podman container managers are supported.
 
 You can copy that single [jx2ecl.sh](jx2ecl.sh) to your system and make sure that it is
 executable and in your PATH.  Then, use the script like you would in the examples above:
@@ -274,6 +275,9 @@ END;
 
 // ds := DATASET('~data::toplevel_223', TOPLEVEL_223_LAYOUT, XML('node'));
 ```
+
+The script mounts the current directory within the Docker container and only those files
+in that directory (or in a subdirectory) are accessible.
 
 The script will see that XML files are passed in (via their file extension) and will
 execute the xml2ecl tool found on the Docker image.
