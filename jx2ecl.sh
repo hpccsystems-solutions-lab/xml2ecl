@@ -12,7 +12,14 @@ DOCKER_REPO=solutions-lab
 DOCKER_TAG=jx2ecl
 IMAGE_NAME="${DOCKER_USER}/${DOCKER_REPO}:${DOCKER_TAG}"
 
-DOCKER_EXEC='docker run --rm'
+if [[ -n "$(type -p docker)"  ]]; then
+    CONTAINER_EXEC='docker run --rm'
+elif [[ -n "$(type -p podman)" ]]; then
+    CONTAINER_EXEC='podman run --rm --privileged'
+else
+    echo "Neither docker nor podman found in PATH"
+    exit 1
+fi
 
 for f in "$@"
 do
@@ -45,7 +52,7 @@ if [[ ${HAS_JSON} -eq 1 ]]; then
 	echo
 	echo ===== JSON =====
 	echo
-	${DOCKER_EXEC} -v ${CURR_DIR}:${MOUNT_DIR} ${IMAGE_NAME} json2ecl ${JSON_FILE_ARGS}
+	${CONTAINER_EXEC} -v ${CURR_DIR}:${MOUNT_DIR} ${IMAGE_NAME} json2ecl ${JSON_FILE_ARGS}
 fi
 
 # Parse XML files
@@ -53,5 +60,5 @@ if [[ ${HAS_XML} -eq 1 ]]; then
 	echo
 	echo ===== XML =====
 	echo
-	${DOCKER_EXEC} -v ${CURR_DIR}:${MOUNT_DIR} ${IMAGE_NAME} xml2ecl ${XML_FILE_ARGS}
+	${CONTAINER_EXEC} -v ${CURR_DIR}:${MOUNT_DIR} ${IMAGE_NAME} xml2ecl ${XML_FILE_ARGS}
 fi
