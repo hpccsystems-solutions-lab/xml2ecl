@@ -256,7 +256,7 @@ ds := HTTPCALL
 # Run Via Docker Image
 
 xml2ecl has been bundled with json2ecl and published as an Ubuntu-based Docker image
-[here](https://hub.docker.com/r/hpccsystems/solutions-lab/tags).
+[here](https://hub.docker.com/r/hpccsystems/solutions-lab/tags?page=1&name=jx2ecl).
 The shell script [jx2ecl.sh](jx2ecl.sh) helps automate downloading of the proper Docker
 image and executing the correct tool depending on the type of the files passed as arguments.
 Both Docker and Podman container managers are supported.
